@@ -1,4 +1,4 @@
-# echo - Go
+# echo
 
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/Alvaroalonsobabbel/echo) ![Test](https://github.com/Alvaroalonsobabbel/echo/actions/workflows/test.yaml/badge.svg)
 
