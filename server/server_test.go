@@ -128,7 +128,7 @@ func TestServer(t *testing.T) {
 			wantResBody:    "{ \"message\": \"INSUFFICIENT DATA FOR MEANINGFUL ANSWER\" }",
 		},
 		{
-			name:           "Error case",
+			name:           "Creating an endpoitn with incorrect information returns an error",
 			requestMethod:  http.MethodPost,
 			requestPath:    "/endpoints",
 			requestBody:    exampleError,
