@@ -49,7 +49,6 @@ func (h *handlers) fetchEndpoints() http.HandlerFunc {
 			replyWithErr(w, http.StatusInternalServerError, fmt.Sprintf("unable to fetch endpoints: %v", err))
 			return
 		}
-
 		if err := json.NewEncoder(w).Encode(e); err != nil {
 			replyWithErr(w, http.StatusInternalServerError, fmt.Sprintf("error serializing endpoints: %v", err))
 			return
@@ -62,6 +61,15 @@ func (h *handlers) createEndpoint() http.HandlerFunc {
 		e, err := unmarshalAndVerify(r)
 		if err != nil {
 			replyWithErr(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		ok, err := h.FindEndpoint(e.Attributes.Verb, e.Attributes.Path)
+		if err != nil {
+			replyWithErr(w, http.StatusInternalServerError, fmt.Sprintf("error finding endpoint: %v", err))
+			return
+		}
+		if ok != nil {
+			replyWithErr(w, http.StatusConflict, fmt.Sprintf("the requested endpoint `%s %s` already exists", e.Attributes.Verb, e.Attributes.Path))
 			return
 		}
 		created, err := h.CreateEndpoint(e)
@@ -150,6 +158,5 @@ func unmarshalAndVerify(r *http.Request) (*store.Endpoint, error) {
 	if err := e.Data.Verify(); err != nil {
 		return nil, err
 	}
-
 	return e.Data, nil
 }

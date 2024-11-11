@@ -13,10 +13,11 @@ import (
 )
 
 const (
-	example        = `{"data":{"type":"endpoints",%s"attributes":{"verb":"GET","path":"/greeting","response":{"code":200,"headers":{"Content-Type":"application/json"},"body":"\"{ \"message\": \"Hello, world\" }\""}}}}`
-	exampleRename  = `{"data":{"type":"endpoints",%s"attributes":{"verb":"GET","path":"/post_it","response":{"code":201,"headers":{"Accept":"test/plain","x-api-key":"superdupersecret"},"body":"Your secrets are not so safe"}}}}`
-	exampleError   = `{"data":{"type":"endpoints","attributes":{"verb":"GETS","path":"/greeting","response":{"code":200,"headers":{},"body":"\"{ \"message\": \"Hello, world\" }\""}}}}`
-	expectedSeeded = `{"data":[{"type":"endpoints","id":1,"attributes":{"verb":"GET","path":"/revert_entropy","response":{"code":200,"headers":{"Content-Type":"application/json"},"body":"\"{ \"message\": \"INSUFFICIENT DATA FOR MEANINGFUL ANSWER\" }\""}}},{"type":"endpoints","id":2,"attributes":{"verb":"POST","path":"/post_it","response":{"code":201,"headers":{"Accept":"test/plain","x-api-key":"superdupersecret"},"body":"Your secrets are not so safe"}}},{"type":"endpoints","id":3,"attributes":{"verb":"PUT","path":"/fail","response":{"code":400,"headers":{"Accept":"test/plain","Content-Type":"application/json"},"body":"\"{\"error\": \"something went horribly wrong :(\" }\""}}},{"type":"endpoints","id":4,"attributes":{"verb":"DELETE","path":"/fake_delete","response":{"code":204,"headers":{},"body":""}}}]}`
+	example         = `{"data":{"type":"endpoints",%s"attributes":{"verb":"GET","path":"/greeting","response":{"code":200,"headers":{"Content-Type":"application/json"},"body":"\"{ \"message\": \"Hello, world\" }\""}}}}`
+	exampleRename   = `{"data":{"type":"endpoints",%s"attributes":{"verb":"GET","path":"/post_it","response":{"code":201,"headers":{"Accept":"test/plain","x-api-key":"superdupersecret"},"body":"Your secrets are not so safe"}}}}`
+	exampleError    = `{"data":{"type":"endpoints","attributes":{"verb":"GETS","path":"/greeting","response":{"code":200,"headers":{},"body":"\"{ \"message\": \"Hello, world\" }\""}}}}`
+	expectedSeeded  = `{"data":[{"type":"endpoints","id":1,"attributes":{"verb":"GET","path":"/revert_entropy","response":{"code":200,"headers":{"Content-Type":"application/json"},"body":"\"{ \"message\": \"INSUFFICIENT DATA FOR MEANINGFUL ANSWER\" }\""}}},{"type":"endpoints","id":2,"attributes":{"verb":"POST","path":"/post_it","response":{"code":201,"headers":{"Accept":"test/plain","x-api-key":"superdupersecret"},"body":"Your secrets are not so safe"}}},{"type":"endpoints","id":3,"attributes":{"verb":"PUT","path":"/fail","response":{"code":400,"headers":{"Accept":"test/plain","Content-Type":"application/json"},"body":"\"{\"error\": \"something went horribly wrong :(\" }\""}}},{"type":"endpoints","id":4,"attributes":{"verb":"DELETE","path":"/fake_delete","response":{"code":204,"headers":{},"body":""}}}]}`
+	exampleExisting = `{"data":{"type":"endpoints","attributes":{"verb":"DELETE","path":"/fake_delete","response":{"code":204,"headers":{},"body":""}}}}`
 )
 
 func TestServer(t *testing.T) {
@@ -71,6 +72,16 @@ func TestServer(t *testing.T) {
 			wantResCode:    http.StatusCreated,
 			wantResHeaders: map[string]string{"Content-Type": "application/vnd.api+json"},
 			wantResBody:    fmt.Sprintf(example, `"id":1,`),
+		},
+		{
+			name:           "POST /endpoints on an already created endpoint returns 409",
+			seed:           true,
+			requestMethod:  http.MethodPost,
+			requestPath:    "/endpoints",
+			requestBody:    exampleExisting,
+			wantResCode:    http.StatusConflict,
+			wantResHeaders: map[string]string{"Content-Type": "application/vnd.api+json"},
+			wantResBody:    "{\"errors\":[{\"code\":\"Conflict\", \"detail\":\"the requested endpoint `DELETE /fake_delete` already exists\"}]}",
 		},
 		{
 			name:           "PATCH /endpoints/{id} updates the existing endpoint",

@@ -68,7 +68,6 @@ func TestStorage(t *testing.T) {
 		updated, err := store.UpdateEndpoint("12", testEndpoint)
 		assert.NoError(t, err)
 		assert.Nil(t, updated)
-		// assert.Equal(t, testEndpoint.Attributes, updated.Data.Attributes)
 	})
 
 	t.Run("DeleteEndpoint deletes an existing endpoint", func(t *testing.T) {
@@ -89,6 +88,7 @@ func TestStorage(t *testing.T) {
 		e, err := store.FindEndpoint(http.MethodGet, "/revert_entropy")
 		assert.NoError(t, err)
 
+		assert.NotNil(t, e)
 		assert.Equal(t, http.StatusOK, e.Code)
 		assert.Equal(t, map[string]string{"Content-Type": "application/json"}, e.Headers)
 		assert.Equal(t, `"{ "message": "INSUFFICIENT DATA FOR MEANINGFUL ANSWER" }"`, e.Body)
