@@ -2,7 +2,7 @@
 
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/Alvaroalonsobabbel/echo) ![Test](https://github.com/Alvaroalonsobabbel/echo/actions/workflows/test.yaml/badge.svg)
 
-Echo code challenge based on [these requirements](echo.md).
+Echo serves ephemeral/mock endpoints created with parameters specified by clients and it's based on [these requirements](echo.md).
 
 ## Technical information
 
@@ -15,7 +15,7 @@ This application was built using Go, and the endpoints use [JSON:API v1.0](https
 
 Use cURL or Postman to send HTTP requests to the server at: `http://localhost:3000`
 
-The Server works using the exact API documentation specified in the [requirements](echo.md#examples).
+The Server works using the exact API documentation specified in the [requirements' examples](echo.md#examples).
 
 To alleviate the burden of the tester, this implementation comes with an in-memory DB and four seeded endpoints.
 
