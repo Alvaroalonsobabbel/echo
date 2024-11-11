@@ -10,6 +10,8 @@ This application was built using Go, and the endpoints use [JSON:API v1.0](https
 
 ## Run locally
 
+⚠️ This document assumes you know how to use git, the terminal and are comfortable around http calls.
+
 1. [Install Go](https://go.dev/doc/install)
 2. (optional) Run the tests with `make test`
 3. (optional) Run the linter with `make lint` - you have to have [golangci-lint](https://golangci-lint.run/welcome/install/) installed.
