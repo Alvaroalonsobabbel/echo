@@ -11,7 +11,9 @@ This application was built using Go, and the endpoints use [JSON:API v1.0](https
 ## Run locally
 
 1. [Install Go](https://go.dev/doc/install)
-2. Run `make run`
+2. (optional) Run the tests with `make test`
+3. (optional) Run the linter with `make lint` - you have to have [golangci-lint](https://golangci-lint.run/welcome/install/) installed.
+4. Start the server with `make run`
 
 Use cURL or Postman to send HTTP requests to the server at: `http://localhost:3000`
 
