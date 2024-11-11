@@ -83,6 +83,15 @@ func TestServer(t *testing.T) {
 			wantResBody:    fmt.Sprintf(exampleRename, `"id":2,`),
 		},
 		{
+			name:           "PATCH /endpoints/{id} returns 404 on an endpoint that doesn't exist",
+			requestMethod:  "PATCH",
+			requestPath:    "/endpoints/12",
+			requestBody:    fmt.Sprintf(exampleRename, ""),
+			wantResCode:    http.StatusNotFound,
+			wantResHeaders: map[string]string{"Content-Type": "application/vnd.api+json"},
+			wantResBody:    "{\"errors\":[{\"code\":\"Not Found\", \"detail\":\"Requested Endpoint with ID 12 does not exist\"}]}",
+		},
+		{
 			name:           "DELETE /endpoints/{id} updates the existing endpoint",
 			seed:           true,
 			requestMethod:  "DELETE",

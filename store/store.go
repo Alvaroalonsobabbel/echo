@@ -44,12 +44,11 @@ VALUES
   )`
 
 const (
-	createEndpointQuery    = `INSERT INTO endpoints ( verb, path, code, headers, body, type ) VALUES ( ?, ?, ?, ?, ?, ? ) RETURNING id, type, verb, path, code, headers, body`
-	updateEndpointQuery    = `UPDATE endpoints SET type = ?, verb = ?, path = ?, code = ?, headers = ?, body = ? WHERE id = ? RETURNING id, type, verb, path, code, headers, body`
-	fetchEndpointsQuery    = "SELECT * FROM endpoints ORDER by id"
-	fetchEndpointByIDQuery = "SELECT * FROM endpoints WHERE id = ?;"
-	deleteEndpointQuery    = "DELETE FROM endpoints WHERE id = ?"
-	findEndpointQuery      = "SELECT code, headers, body FROM endpoints WHERE verb = ? AND path = ?"
+	createEndpointQuery = `INSERT INTO endpoints ( verb, path, code, headers, body, type ) VALUES ( ?, ?, ?, ?, ?, ? ) RETURNING *`
+	updateEndpointQuery = `UPDATE endpoints SET type = ?, verb = ?, path = ?, code = ?, headers = ?, body = ? WHERE id = ? RETURNING *`
+	fetchEndpointsQuery = "SELECT * FROM endpoints ORDER by id"
+	deleteEndpointQuery = "DELETE FROM endpoints WHERE id = ?"
+	findEndpointQuery   = "SELECT code, headers, body FROM endpoints WHERE verb = ? AND path = ?"
 )
 
 type One struct {
@@ -254,6 +253,9 @@ func (s *Store) UpdateEndpoint(id string, endpoint *Endpoint) (*One, error) {
 		&e.Attributes.Response.Body,
 	)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 	err = json.Unmarshal([]byte(headers), &e.Attributes.Response.Headers)

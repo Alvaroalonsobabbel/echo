@@ -64,6 +64,13 @@ func TestStorage(t *testing.T) {
 		assert.Equal(t, testEndpoint.Attributes, updated.Data.Attributes)
 	})
 
+	t.Run("UpdateEndpoint returns nil when updating an endpoint that does not exist", func(t *testing.T) {
+		updated, err := store.UpdateEndpoint("12", testEndpoint)
+		assert.NoError(t, err)
+		assert.Nil(t, updated)
+		// assert.Equal(t, testEndpoint.Attributes, updated.Data.Attributes)
+	})
+
 	t.Run("DeleteEndpoint deletes an existing endpoint", func(t *testing.T) {
 		ok, err := store.DeleteEndpoint("5")
 		assert.NoError(t, err)

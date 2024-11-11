@@ -1,7 +1,6 @@
 package server
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -87,11 +86,11 @@ func (h *handlers) updateEndpoint() http.HandlerFunc {
 		}
 		updated, err := h.UpdateEndpoint(r.PathValue("id"), e)
 		if err != nil {
-			if err == sql.ErrNoRows {
-				replyWithErr(w, http.StatusNotFound, fmt.Sprintf("Requested Endpoint with ID %s does not exist", r.PathValue("id")))
-				return
-			}
 			replyWithErr(w, http.StatusInternalServerError, fmt.Sprintf("unable to update endpoint: %v", err))
+			return
+		}
+		if updated == nil {
+			replyWithErr(w, http.StatusNotFound, fmt.Sprintf("Requested Endpoint with ID %s does not exist", r.PathValue("id")))
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
