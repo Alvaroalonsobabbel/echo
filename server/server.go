@@ -90,7 +90,7 @@ func (h *handlers) updateEndpoint() http.HandlerFunc {
 			return
 		}
 		if updated == nil {
-			replyWithErr(w, http.StatusNotFound, fmt.Sprintf("Requested Endpoint with ID %s does not exist", r.PathValue("id")))
+			replyWithErr(w, http.StatusNotFound, fmt.Sprintf("Requested Endpoint with ID `%s` does not exist", r.PathValue("id")))
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
