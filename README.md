@@ -1,8 +1,8 @@
 # echo - Go
 
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/Alvaroalonsobabbel/echo) ![Test](https://github.com/Alvaroalonsobabbel/echo/actions/workflows/test.yml/badge.svg)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/Alvaroalonsobabbel/echo) ![Test](https://github.com/Alvaroalonsobabbel/echo/actions/workflows/test.yaml/badge.svg)
 
-Echo code challenge based on [these requirements](echo.md)
+Echo code challenge based on [these requirements](echo.md).
 
 ## Technical information
 
