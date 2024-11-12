@@ -9,20 +9,48 @@ import (
 )
 
 func TestEndpointsVerify(t *testing.T) {
-	happyPath := "happy path"
 	tests := []struct {
-		name   string
-		modify func(e *Endpoint)
+		name      string
+		wantNoErr bool
+		modify    func(e *Endpoint)
 	}{
-		{happyPath, func(*Endpoint) {}},
-		{"incorrect type attribute", func(e *Endpoint) { e.Type = "test" }},
-		{"empty type attribute", func(e *Endpoint) { e.Type = "" }},
-		{"incorrect verb attribute", func(e *Endpoint) { e.Attributes.Verb = "CUAK" }},
-		{"empty verb attribute", func(e *Endpoint) { e.Attributes.Verb = "" }},
-		{"incorrect path attribute", func(e *Endpoint) { e.Attributes.Path = "@@" }},
-		{"empty path attribute", func(e *Endpoint) { e.Attributes.Path = "" }},
-		{"incorrect code attribute", func(e *Endpoint) { e.Attributes.Response.Code = 600 }},
-		{"empty code attribute", func(e *Endpoint) { e.Attributes.Response.Code = 0 }},
+		{
+			name:      "happyPath",
+			wantNoErr: true,
+			modify:    func(*Endpoint) {},
+		},
+		{
+			name:   "incorrect type attribute",
+			modify: func(e *Endpoint) { e.Type = "test" },
+		},
+		{
+			name:   "empty type attribute",
+			modify: func(e *Endpoint) { e.Type = "" },
+		},
+		{
+			name:   "incorrect verb attribute",
+			modify: func(e *Endpoint) { e.Attributes.Verb = "CUAK" },
+		},
+		{
+			name:   "empty verb attribute",
+			modify: func(e *Endpoint) { e.Attributes.Verb = "" },
+		},
+		{
+			name:   "incorrect path attribute",
+			modify: func(e *Endpoint) { e.Attributes.Path = "@@" },
+		},
+		{
+			name:   "empty path attribute",
+			modify: func(e *Endpoint) { e.Attributes.Path = "" },
+		},
+		{
+			name:   "incorrect code attribute",
+			modify: func(e *Endpoint) { e.Attributes.Response.Code = 600 },
+		},
+		{
+			name:   "empty code attribute",
+			modify: func(e *Endpoint) { e.Attributes.Response.Code = 0 },
+		},
 	}
 
 	for _, test := range tests {
@@ -30,7 +58,7 @@ func TestEndpointsVerify(t *testing.T) {
 			validate := validator.New()
 			endpoint := newTestEndpoint()
 			test.modify(endpoint)
-			if test.name == happyPath {
+			if test.wantNoErr {
 				assert.NoError(t, validate.Struct(endpoint))
 				return
 			}
