@@ -9,6 +9,7 @@ import (
 )
 
 func TestEndpointsVerify(t *testing.T) {
+	validate := validator.New()
 	tests := []struct {
 		name      string
 		wantNoErr bool
@@ -55,7 +56,6 @@ func TestEndpointsVerify(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			validate := validator.New()
 			endpoint := newTestEndpoint()
 			test.modify(endpoint)
 			if test.wantNoErr {
