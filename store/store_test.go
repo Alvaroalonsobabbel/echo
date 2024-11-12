@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,13 +27,14 @@ func TestEndpointsVerify(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			validate := validator.New()
 			endpoint := newTestEndpoint()
 			test.modify(endpoint)
 			if test.name == happyPath {
-				assert.NoError(t, endpoint.Verify())
+				assert.NoError(t, validate.Struct(endpoint))
 				return
 			}
-			assert.Error(t, endpoint.Verify())
+			assert.Error(t, validate.Struct(endpoint))
 		})
 	}
 }

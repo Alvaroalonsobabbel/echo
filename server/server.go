@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/Alvaroalonsobabbel/echo/store"
+	"github.com/go-playground/validator/v10"
 )
 
 const (
@@ -19,7 +20,7 @@ const (
 )
 
 func New(store *store.Store) http.Handler {
-	handle := &handlers{store}
+	handle := &handlers{store, validator.New()}
 	mux := http.NewServeMux()
 
 	mux.HandleFunc(getEndpointsPath, handle.fetchEndpoints())
@@ -40,6 +41,7 @@ func withVndHeaderMiddleware(next http.Handler) http.Handler {
 
 type handlers struct {
 	*store.Store
+	*validator.Validate
 }
 
 func (h *handlers) fetchEndpoints() http.HandlerFunc {
@@ -58,7 +60,7 @@ func (h *handlers) fetchEndpoints() http.HandlerFunc {
 
 func (h *handlers) createEndpoint() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		e, err := unmarshalAndVerify(r)
+		e, err := h.unmarshalAndVerify(r)
 		if err != nil {
 			replyWithErr(w, http.StatusBadRequest, err.Error())
 			return
@@ -87,7 +89,7 @@ func (h *handlers) createEndpoint() http.HandlerFunc {
 
 func (h *handlers) updateEndpoint() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		e, err := unmarshalAndVerify(r)
+		e, err := h.unmarshalAndVerify(r)
 		if err != nil {
 			replyWithErr(w, http.StatusBadRequest, err.Error())
 			return
@@ -139,6 +141,19 @@ func (h *handlers) all() http.HandlerFunc {
 	}
 }
 
+func (h *handlers) unmarshalAndVerify(r *http.Request) (*store.Endpoint, error) {
+	e := &store.One{}
+	defer r.Body.Close()
+
+	if err := json.NewDecoder(r.Body).Decode(e); err != nil {
+		return nil, fmt.Errorf("Unable to decode request body: %v", err)
+	}
+	if err := h.Struct(e.Data); err != nil {
+		return nil, err
+	}
+	return e.Data, nil
+}
+
 func replyWithErr(w http.ResponseWriter, code int, err string) {
 	if code == http.StatusInternalServerError {
 		log.Printf("internal error: %s", err)
@@ -146,17 +161,4 @@ func replyWithErr(w http.ResponseWriter, code int, err string) {
 	}
 	w.WriteHeader(code)
 	fmt.Fprintf(w, errorMessage, http.StatusText(code), err)
-}
-
-func unmarshalAndVerify(r *http.Request) (*store.Endpoint, error) {
-	e := &store.One{}
-	defer r.Body.Close()
-
-	if err := json.NewDecoder(r.Body).Decode(e); err != nil {
-		return nil, fmt.Errorf("Unable to decode request body: %v", err)
-	}
-	if err := e.Data.Verify(); err != nil {
-		return nil, err
-	}
-	return e.Data, nil
 }

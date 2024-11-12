@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-playground/validator/v10"
 	_ "github.com/mattn/go-sqlite3" // SQL driver
 )
 
@@ -63,10 +62,6 @@ type Endpoint struct {
 	Type       string     `json:"type" validate:"required,oneof=endpoints"`
 	ID         int        `json:"id"`
 	Attributes Attributes `json:"attributes" validate:"required"`
-}
-
-func (e *Endpoint) Verify() error {
-	return validator.New().Struct(e)
 }
 
 type Attributes struct {
