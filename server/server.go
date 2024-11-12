@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/Alvaroalonsobabbel/echo/store"
 	"github.com/go-playground/validator/v10"
@@ -137,7 +138,7 @@ func (h *handlers) all() http.HandlerFunc {
 			replyWithErr(w, http.StatusNotFound, fmt.Sprintf("Requested page `%s` does not exist", r.URL.Path))
 			return
 		}
-		e.Serve(w)
+		serve(w, e)
 	}
 }
 
@@ -152,6 +153,20 @@ func (h *handlers) unmarshalAndVerify(r *http.Request) (*store.Endpoint, error) 
 		return nil, err
 	}
 	return e.Data, nil
+}
+
+func serve(w http.ResponseWriter, r *store.Response) {
+	// Remove application/vnd.api+json passed by middleware.
+	w.Header().Del("Content-Type")
+
+	r.Body = strings.TrimPrefix(r.Body, "\"")
+	r.Body = strings.TrimSuffix(r.Body, "\"")
+	for k, v := range r.Headers {
+		w.Header().Add(k, v)
+	}
+	w.WriteHeader(r.Code)
+
+	fmt.Fprint(w, r.Body)
 }
 
 func replyWithErr(w http.ResponseWriter, code int, err string) {

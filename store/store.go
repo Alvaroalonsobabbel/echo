@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"strings"
 
 	_ "github.com/mattn/go-sqlite3" // SQL driver
 )
@@ -74,20 +72,6 @@ type Response struct {
 	Code    int               `json:"code" validate:"required,gte=100,lte=599"`
 	Headers map[string]string `json:"headers"`
 	Body    string            `json:"body"`
-}
-
-func (r *Response) Serve(w http.ResponseWriter) {
-	// Remove application/vnd.api+json passed by middleware.
-	w.Header().Del("Content-Type")
-
-	r.Body = strings.TrimPrefix(r.Body, "\"")
-	r.Body = strings.TrimSuffix(r.Body, "\"")
-	for k, v := range r.Headers {
-		w.Header().Add(k, v)
-	}
-	w.WriteHeader(r.Code)
-
-	fmt.Fprint(w, r.Body)
 }
 
 type Store struct {
