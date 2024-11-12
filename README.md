@@ -1,6 +1,6 @@
 # echo
 
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/Alvaroalonsobabbel/echo) ![Test](https://github.com/Alvaroalonsobabbel/echo/actions/workflows/test.yaml/badge.svg)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/Alvaroalonsobabbel/echo) ![Test](https://github.com/Alvaroalonsobabbel/echo/actions/workflows/test.yaml/badge.svg) [![Go Report Card](https://goreportcard.com/badge/github.com/Alvaroalonsobabbel/echo)](https://goreportcard.com/report/github.com/Alvaroalonsobabbel/echo)
 
 Echo serves ephemeral/mock endpoints created with parameters specified by clients and it's based on [these requirements](echo.md).
 
